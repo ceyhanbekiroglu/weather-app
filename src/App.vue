@@ -1,5 +1,10 @@
 <template>
-	<div id="app">
+	<div
+		id="app"
+		:class="
+			typeof weather.main != 'undefined' && weather.main.temp > 15 ? 'warm' : ''
+		"
+	>
 		<main>
 			<div class="search-box">
 				<input
@@ -15,11 +20,19 @@
 					<div class="location">
 						{{ weather.name }}, {{ weather.sys.country }}
 					</div>
-					<div class="date">monday 20 february 2020</div>
+					<div class="date">{{ dateBuilder() }}</div>
 				</div>
 				<div class="weather-box">
 					<div class="temp">{{ weather.main.temp }} °C</div>
 					<div class="weather">{{ weather.weather[0].main }}</div>
+					<div class="feels-like">
+						Feels Like {{ weather.main.feels_like }} °C
+					</div>
+					<div class="temp-min">Temp min {{ weather.main.temp_min }} °C</div>
+					<div class="temp-max">Temp max {{ weather.main.temp_max }} °C</div>
+
+					/*"feels_like": 21.6, "temp_min": 20.3, "temp_max": 23.02,
+					"sunrise"1654661890, "sunset": 1654716172*/
 				</div>
 			</div>
 		</main>
@@ -51,6 +64,37 @@ export default {
 		},
 		setResults(results) {
 			this.weather = results
+		},
+		dateBuilder() {
+			let d = new Date()
+			let months = [
+				'January',
+				'February',
+				'March',
+				'April',
+				'May',
+				'June',
+				'July',
+				'August',
+				'September',
+				'October',
+				'November',
+				'December',
+			]
+			let days = [
+				'Sunday',
+				'Monday',
+				'Tuesday',
+				'Wednesday',
+				'Thursday',
+				'Friday',
+				'Saturday',
+			]
+			let day = days[d.getDay()]
+			let date = d.getDate()
+			let month = months[d.getMonth()]
+			let year = d.getFullYear()
+			return `${day} ${date} ${month} ${year}`
 		},
 	},
 }
@@ -138,6 +182,13 @@ main {
 	box-shadow: 3px 6px rgba(0, 0, 0, 0.25);
 }
 .weather-box .weather {
+	color: #fff;
+	font-size: 48px;
+	font-weight: 700;
+	font-style: italic;
+	text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
+}
+.weather-box .feels-like {
 	color: #fff;
 	font-size: 48px;
 	font-weight: 700;
