@@ -10,14 +10,16 @@
 					@keypress="fetchWeather"
 				/>
 			</div>
-			<div class="weather-wrap">
+			<div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
 				<div class="location-box">
-					<div class="location">North, UK</div>
+					<div class="location">
+						{{ weather.name }}, {{ weather.sys.country }}
+					</div>
 					<div class="date">monday 20 february 2020</div>
 				</div>
 				<div class="weather-box">
-					<div class="temp">9°C</div>
-					<div class="weather">rain</div>
+					<div class="temp">{{ weather.main.temp }} °C</div>
+					<div class="weather">{{ weather.weather[0].main }}</div>
 				</div>
 			</div>
 		</main>
@@ -30,7 +32,7 @@ export default {
 	data() {
 		return {
 			api_key: '148db8849a74cf2ca1f63618132d529b',
-			url_base: 'https://api.openweathermap.org/data/2.5/weather?q=',
+			url_base: 'https://api.openweathermap.org/data/2.5/',
 			query: '',
 			weather: {},
 		}
@@ -39,13 +41,16 @@ export default {
 		fetchWeather(e) {
 			if (e.key == 'Enter') {
 				fetch(
-					`${this.api_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`
+					`${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.api_key}`
 				)
-					.then((response) => response.json())
-					.then((data) => {
-						this.weather = data
+					.then((res) => {
+						return res.json()
 					})
+					.then(this.setResults)
 			}
+		},
+		setResults(results) {
+			this.weather = results
 		},
 	},
 }
